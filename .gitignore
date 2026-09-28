@@ -1,4 +1,6 @@
 node_modules/
+dist/
+.vercel/
 .npm-cache/
 .playwright-mcp/
 
@@ -6,6 +8,7 @@ node_modules/
 /preview*.png
 /mobile*.png
 /tank*.png
+/reference*.png
 
 # Local environment configuration
 .env

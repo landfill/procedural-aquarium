@@ -5,15 +5,24 @@ export const SPECIES = [
   { id: 'angel', name: '엔젤피시', latin: 'Pterophyllum scalare', color: '#d8e4d9', price: 150, description: '우아하게 흐르는 은빛 지느러미', shape: 3 },
 ];
 export const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
+const DEFAULT_PLANTS=[[-2.65,-.66],[-1.72,-.96],[2.58,-.79],[1.81,-.97],[-2.77,.28],[.95,-.99],[-.95,-1.04],[2.62,.45],[-2.1,.73],[.65,.85],[-.8,.81],[2,.63]];
+export const initialPlantPositions=(count=5)=>DEFAULT_PLANTS.slice(0,count).map(([x,z])=>({x,z}));
+export const validPlantPosition=p=>!!p&&Number.isFinite(p.x)&&Number.isFinite(p.z)&&Math.abs(p.x)<=2.98&&Math.abs(p.z)<=1.53;
+export function canPlacePlant(state,p){return validPlantPosition(p)&&!state.plantPositions.some(other=>Math.hypot(p.x-other.x,p.z-other.z)<.34);}
+export function placePlant(state,p){
+  if(state.plants>=12||state.coins<40||!canPlacePlant(state,p))return false;
+  state.plantPositions.push({x:p.x,z:p.z});state.plants=state.plantPositions.length;state.coins-=40;return true;
+}
 export function makeFish(type, n = 0) { return { id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`, type, name: `${SPECIES[type].name} ${n + 1}`, x: .2 + Math.random() * .6, y: .25 + Math.random() * .4, z: Math.random(), direction: n % 2 ? -1 : 1, hunger: 72, growth: 0, age: 0, phase: Math.random() * 6.28 }; }
-export function freshState() { return { version: 1, coins: 320, quality: 94, oxygen: 96, elapsed: 0, earnedAt: 0, light: true, plants: 5, fed: 0, cleaned: 0, claimed: [], fish: [makeFish(0, 0), makeFish(0, 1), makeFish(1, 0), makeFish(2, 0), makeFish(3, 0)] }; }
+export function freshState() { return { version: 1, coins: 320, quality: 94, oxygen: 96, elapsed: 0, earnedAt: 0, light: true, plants: 5, plantPositions:initialPlantPositions(), fed: 0, cleaned: 0, claimed: [], fish: [makeFish(0, 0), makeFish(0, 1), makeFish(1, 0), makeFish(2, 0), makeFish(3, 0)] }; }
 export function restore(raw) {
   try {
     const data = JSON.parse(raw);
     if (data.version !== 1 || !Array.isArray(data.fish) || data.fish.length > 16 || !data.fish.length) return freshState();
     const state = freshState();
     for (const key of ['coins','quality','oxygen','elapsed','earnedAt','plants','fed','cleaned']) if (Number.isFinite(data[key])) state[key] = Math.max(0, data[key]);
-    state.coins = Math.floor(state.coins); state.quality = clamp(state.quality, 0, 100); state.oxygen = clamp(state.oxygen, 0, 100); state.plants = clamp(state.plants, 5, 12);
+    state.coins = Math.floor(state.coins); state.quality = clamp(state.quality, 0, 100); state.oxygen = clamp(state.oxygen, 0, 100); state.plants = Math.floor(clamp(state.plants, 5, 12));
+    state.plantPositions=initialPlantPositions(state.plants).map((fallback,i)=>{const p=data.plantPositions?.[i];return validPlantPosition(p)?{x:p.x,z:p.z}:fallback;});
     state.light = data.light !== false; state.claimed = Array.isArray(data.claimed) ? data.claimed.filter(x => ['feed','clean','grow'].includes(x)) : [];
     state.fish = data.fish.filter(f => Number.isInteger(f.type) && SPECIES[f.type]).map((f, i) => { const fish = makeFish(f.type, i); for (const key of ['x','y','z','hunger','growth','age']) if (Number.isFinite(f[key])) fish[key] = clamp(f[key], 0, key === 'hunger' || key === 'growth' ? 100 : key === 'age' ? 1e9 : 1); return fish; });
     return state.fish.length ? state : freshState();
@@ -31,5 +40,5 @@ export function tick(state, dt) {
   for (const f of state.fish) { f.age += dt; f.hunger = clamp(f.hunger - dt * .048, 0, 100); if (f.hunger > 35 && state.quality > 40) f.growth = clamp(f.growth + dt * .055, 0, 100); }
   if (state.elapsed - state.earnedAt >= 30) { state.coins += state.fish.filter(f => f.hunger > 30 && state.quality > 35).length * 3; state.earnedAt = state.elapsed; }
 }
-export function clean(state) { if (state.coins < 20 || state.quality > 99) return false; state.coins -= 20; state.quality = clamp(state.quality + 35, 0, 100); state.oxygen = clamp(state.oxygen + 15, 0, 100); state.cleaned++; return true; }
+export function clean(state,hasDebris=false) { if (state.coins < 20 || (state.quality >= 99.9&&!hasDebris)) return false; state.coins -= 20; state.quality = 100; state.oxygen = clamp(state.oxygen + 15, 0, 100); state.cleaned++; return true; }
 export function feedFish(state, fish) { fish.hunger = clamp(fish.hunger + 18, 0, 100); fish.growth = clamp(fish.growth + 1.3, 0, 100); state.fed++; }
