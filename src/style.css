@@ -6,13 +6,39 @@
 .water-controls{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 5px;border-bottom:1px solid #dfe2d8;font-size:10px;color:#6b8371}.water-controls label{display:flex;gap:9px;align-items:center;white-space:nowrap}.water-controls input{width:75px;height:14px;accent-color:#668b79;cursor:pointer}.water-controls output{font-size:9px;color:#899782;font-variant-numeric:tabular-nums;min-width:26px}.water-controls button{padding:6px 8px;border-radius:5px;font-size:10px}.water-controls button:hover,.water-controls button[aria-pressed=true]{background:#e3eadd;color:#335c47}@media(max-width:650px){.water-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 0}.water-controls label{justify-content:center;gap:6px}.water-controls input{width:60px}.water-controls button:first-child{grid-column:1}.water-controls button:last-child{grid-column:2;grid-row:1}}
 .aquarium-player{min-width:0}
 body.aquarium-expanded{overflow:hidden}
-.aquarium-player.is-expanded{position:fixed;inset:0;z-index:1000;width:100%;height:100dvh;max-width:none;display:grid;grid-template-rows:minmax(0,1fr) auto auto;background:#f5f4ee;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0px)}
-.aquarium-player.is-expanded .aquarium{width:100%;height:100%;min-height:0;border-radius:0;box-shadow:none}
-.aquarium-player.is-expanded .toolbar{padding:12px max(20px,env(safe-area-inset-right,0px)) 12px max(20px,env(safe-area-inset-left,0px));margin:0;background:#f5f4ee}
-.aquarium-player.is-expanded .water-controls{padding:10px 20px;margin:0;background:#f5f4ee;border-bottom:0;gap:12px}
-.aquarium-player.is-expanded .glass-icon{width:38px;height:38px}
-.aquarium-player.is-expanded .tool,.aquarium-player.is-expanded .light-toggle,.aquarium-player.is-expanded .water-controls button{min-height:36px}
-.aquarium-player.is-expanded #toast{position:absolute;top:18px;bottom:auto;max-width:min(520px,calc(100% - 130px));z-index:20}
-@media(max-width:520px){.aquarium-player.is-expanded .toolbar{padding:10px 14px;gap:8px}.aquarium-player.is-expanded .water-controls{padding:8px 12px;gap:4px}.aquarium-player.is-expanded .water-controls label{min-height:32px}.aquarium-player.is-expanded #toast{top:62px;max-width:calc(100% - 32px)}}
-@media(max-height:500px){.aquarium-player.is-expanded .toolbar{padding-top:5px;padding-bottom:5px}.aquarium-player.is-expanded .water-controls{padding-top:3px;padding-bottom:3px}.aquarium-player.is-expanded .tool small{display:none}.aquarium-player.is-expanded .scene-caption{display:none}.aquarium-player.is-expanded .scene-top{top:10px}.aquarium-player.is-expanded .scene-bottom{bottom:10px}}
+.fullscreen-hud{display:none}
+.aquarium-player.is-expanded{position:fixed;inset:0;z-index:1000;width:100%;height:100dvh;max-width:none;display:block;background:#103333;overflow:hidden;--hud-bottom:max(18px,env(safe-area-inset-bottom));--hud-right:max(22px,env(safe-area-inset-right));--hud-left:max(22px,env(safe-area-inset-left))}
+.aquarium-player.is-expanded .aquarium{position:absolute;inset:0;width:100%;height:100%;min-height:0;border-radius:0;box-shadow:none}
+.aquarium-player.is-expanded .toolbar{position:absolute;left:var(--hud-left);bottom:var(--hud-bottom);z-index:12;width:auto;margin:0;padding:6px;gap:0;border:1px solid #c6e6d52b;border-radius:12px;background:#0d302dc9;backdrop-filter:blur(16px);box-shadow:0 6px 24px #00171325;color:#daeee0}
+.aquarium-player.is-expanded .tools{width:auto;gap:4px}
+.aquarium-player.is-expanded .tool{min-height:38px;padding:7px 10px;gap:7px;color:#daeee0}
+.aquarium-player.is-expanded .tool>svg{width:19px;height:19px;color:#a9d4bd}
+.aquarium-player.is-expanded .tool span{font-size:11px;font-weight:500}
+.aquarium-player.is-expanded .tool small,.aquarium-player.is-expanded .tool kbd{display:none}
+.aquarium-player.is-expanded .divider{height:22px;background:#c6e6d521}
+.aquarium-player.is-expanded .tool.active{background:#9dcfb32b;box-shadow:none;color:#edffe7}
+.aquarium-player.is-expanded .glass-icon{width:38px;height:38px;background:#10363094;backdrop-filter:blur(12px)}
+.aquarium-player.is-expanded .scene-top{top:max(18px,env(safe-area-inset-top));left:var(--hud-left);right:var(--hud-right)}
+.aquarium-player.is-expanded .scene-bottom{left:var(--hud-left);right:var(--hud-right);bottom:var(--hud-bottom);height:50px}
+.aquarium-player.is-expanded .scene-bottom>div{margin-left:auto}
+.aquarium-player.is-expanded #scene-hint{position:absolute;left:0;bottom:66px;max-width:min(430px,calc(100vw - 44px));font-size:10px;line-height:1.6;text-shadow:0 1px 4px #052825}
+.aquarium-player.is-expanded .fish-info{bottom:120px}
+.aquarium-player.is-expanded .fullscreen-hud{display:flex;align-items:flex-start;gap:8px;position:absolute;top:max(18px,env(safe-area-inset-top));right:calc(var(--hud-right) + 48px);z-index:14;color:#daeee0}
+.fullscreen-hud .light-toggle,.fullscreen-settings>summary{height:38px;padding:0 12px;display:flex;align-items:center;border:1px solid #c6e6d52b;border-radius:8px;background:#0d302dc9;backdrop-filter:blur(16px);font-size:11px;cursor:pointer}
+.fullscreen-hud .light-toggle{margin:0;gap:7px}
+.fullscreen-settings>summary{list-style:none;gap:8px}
+.fullscreen-settings>summary::-webkit-details-marker{display:none}
+.fullscreen-settings>summary:after{content:'⌄';font-size:13px;color:#a6c7b5}
+.fullscreen-settings[open]>summary{background:#285449}
+.fullscreen-settings{position:relative}
+.aquarium-player.is-expanded .water-controls{position:absolute;top:47px;right:0;width:260px;display:grid;grid-template-columns:1fr;gap:12px;padding:16px;margin:0;border:1px solid #c6e6d535;border-radius:12px;background:#0b2d29ed;color:#d7eadc;backdrop-filter:blur(18px);box-shadow:0 8px 28px #001b3040;max-height:calc(100dvh - 140px);overflow:auto}
+.aquarium-player.is-expanded .water-controls button{grid-column:auto;grid-row:auto;min-height:34px;font-size:11px;color:#d7eadc;background:#b2d6b810;border-radius:6px}
+.aquarium-player.is-expanded .water-controls button:hover,.aquarium-player.is-expanded .water-controls button[aria-pressed=true]{background:#96cdae30;color:#edffe7}
+.aquarium-player.is-expanded .water-controls label{display:grid;grid-template-columns:42px 1fr 28px;gap:10px;min-height:32px;justify-content:initial;font-size:11px}
+.aquarium-player.is-expanded .water-controls input{width:100%;accent-color:#a8cdb2}
+.aquarium-player.is-expanded .water-controls output{color:#a9c7b2}
+.aquarium-player.is-expanded #toast{position:absolute;top:auto;bottom:84px;max-width:min(520px,calc(100% - 44px));z-index:20}
+@media(max-width:600px){.aquarium-player.is-expanded{--hud-left:12px;--hud-right:12px;--hud-bottom:max(12px,env(safe-area-inset-bottom))}.aquarium-player.is-expanded .scene-tag{display:none}.aquarium-player.is-expanded .scene-top>div{max-width:calc(100% - 230px);overflow:hidden;white-space:nowrap}.aquarium-player.is-expanded .tool{padding:6px 8px;min-width:42px;min-height:40px}.aquarium-player.is-expanded .tool span{font-size:10px}.aquarium-player.is-expanded .tool>svg{width:17px}.aquarium-player.is-expanded .toolbar{padding:4px}.aquarium-player.is-expanded .tools{gap:0}.fullscreen-hud .light-toggle,.fullscreen-settings>summary{padding:0 9px;font-size:10px}.aquarium-player.is-expanded .water-controls{width:min(260px,calc(100vw - 76px))}}
+@media(max-width:420px){.aquarium-player.is-expanded .tool{flex-direction:column;gap:3px;padding:5px 9px}.aquarium-player.is-expanded .tool span{font-size:9px}.aquarium-player.is-expanded .scene-caption{top:80px}.aquarium-player.is-expanded .scene-top>div{font-size:9px}}
+@media(max-height:500px){.aquarium-player.is-expanded .scene-caption{display:none}.aquarium-player.is-expanded #scene-hint{font-size:9px;bottom:62px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
