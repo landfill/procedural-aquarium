@@ -1,0 +1,12 @@
+node_modules/
+.npm-cache/
+.playwright-mcp/
+
+# Local visual verification captures
+/preview*.png
+/mobile*.png
+/tank*.png
+
+# Local environment configuration
+.env
+.env.*
